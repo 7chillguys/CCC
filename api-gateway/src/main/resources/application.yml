@@ -1,0 +1,57 @@
+spring:
+  application:
+    # 어플리케이션의 이름관리 중요!! 오타 주의(게이트웨이 등록시)
+    # 해당 이름은 ApiGatewayApplication (앱의 이름)이 이름과 연관을 맺는다!!
+    name: api-gateway
+  # 서비스 등록 방법
+  # 1. 환경 변수에서 서비스 등록 세팅하는 방법,
+  # (*)2. 코드에서 직접 서비스 등록 구성
+
+  # 성능 향상 옵션 -> spring cloud에서 버전 호황성 검사 비활성 처리 -> 성능 향상
+  cloud:
+    compatibility-verifier:
+      enabled: false # 기본값 일치
+  # 빈을 여러개 생성할 경우 -> 동일 이름의 빈이 구성 -> 나중에 구성된 빈을 최종 빈으로 처리 옵션
+  main:
+    allow-bean-definition-overriding: true # 기본값 false, 코드가 커지면 나올수 있는 문제
+
+# redis 연결
+# 관리상 1개의 redis를 모든 서비스가 공유하게 구성
+# redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      repositories:
+        enabled: false
+
+
+
+# 게이트웨이 담당, 모든 유저(혹은 프런트엔드)는 이 포트로 접속 -> 8080
+server:
+  port: 8080
+
+# 유레카 서버의 서비스 정보 페이지 등록
+eureka:
+  client:
+    service-url:
+      # 현재는 미구현 상태로 404임
+      defaultZone: http://localhost:8761/eureka
+  # 유레카 서버에 서비스 등록, 헬시체크(계속 살아 있는지 체크 주기 지정)
+  # 체크후 특정 시간동안 갱신이 않되면, 유레카 서버에서 제거 -> 제한시간 지정
+  instance:
+    lease-renewal-interval-in-seconds: 15 # 기본 30초 -> 15초 주기 조정 : 헬시체크
+    lease-expiration-duration-in-seconds: 20 # 기본 90초 -> 20초 정도 대기
+
+
+
+# JWT (커스턴 환경변수)
+jwt:
+  token:
+    raw_secret_key: ee307329f2112629066634f34e18a07c060bbf6a9b17f2d28327659cdc566bf6
+  # 만료시간을 임의로 짧게 부여 -> 조정가능
+  expiration: 10
+    
+
+
+# RDB는 서비스별로 따로 관리
