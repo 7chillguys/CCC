@@ -51,6 +51,8 @@ public class UserService {
                 .emp_id(userDto.getEmp_id())
                 .name(userDto.getName())
                 .password(passwordEncoder.encode(userDto.getPassword()))
+                .department(userDto.getDepartment())
+                .position(userDto.getPosition())
                 .email(userDto.getEmail())
                 .enabled(false) // 이메일 인증 여부
                 .build();

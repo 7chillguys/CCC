@@ -38,10 +38,11 @@ public class UserEntity implements UserDetails {
     private boolean enabled; // 이메일 인증 여부
 
     @Builder
-    public UserEntity(String emp_id, String name, String password, String position, String email, boolean enabled) {
+    public UserEntity(String emp_id, String name, String password,String department, String position, String email, boolean enabled) {
         this.emp_id = emp_id;
         this.name = name;
         this.password = password;
+        this.department = department;
         this.position = position;
         this.email = email;
         this.enabled = enabled;
