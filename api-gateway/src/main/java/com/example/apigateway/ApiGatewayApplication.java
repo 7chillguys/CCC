@@ -44,13 +44,13 @@ public class ApiGatewayApplication {
                 //           주문관리, 결제관리
 
                 // 회원관리 -> url 프리픽스 2개 사용
-                .route("msa-sb-user",
-                        r->r.path("/auth/**").uri("lb://msa-sb-user")  )
-                .route("msa-sb-user",
-                        r->r.path("/user/**").uri("lb://msa-sb-user")  )
+                .route("ccc-user",
+                        r->r.path("/auth/**").uri("lb://ccc-user")  )
+                .route("ccc-user",
+                        r->r.path("/user/**").uri("lb://ccc-user")  )
                 // 상품조회, 장바구니 관리
-                .route("msa-sb-products",
-                        r->r.path("/pdts/**").uri("lb://msa-sb-products")  )
+//                .route("ccc-products",
+//                        r->r.path("/pdts/**").uri("lb://ccc-products")  )
                 .build();
     }
 
