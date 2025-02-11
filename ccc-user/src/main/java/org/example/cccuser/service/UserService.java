@@ -30,39 +30,39 @@ public class UserService {
     public void createUser(UserDto userDto) {
         // 1. 입력값 검증
         // 값 -> 검증가능!! -> 오류 -> 예외 던지기!! -> 생략
-        // UI단을 사용 -> vaildation 사용, restapi -> 값에서 체크
-        if( userDto.getEmail() == null || userDto.getEmail().isEmpty() ) {
-            throw new IllegalArgumentException("Email cannot be empty");
-        }
+        // UI 단을 사용 -> validation 사용, restapi -> 값에서 체크
         // 기존 가입자인지? -> 이메일 중복 체크!! -> 레포지토리 커스텀 구성
         // findBy + 컬럼명() => findByEmail()
         if( userRepository.findByEmail(userDto.getEmail()).isPresent() ) {
             throw new IllegalArgumentException("Email already exists");
         }
-        if( userDto.getUserName() == null || userDto.getUserName().isEmpty() ) {
-            throw new IllegalArgumentException("userName cannot be empty");
+        if( userDto.getName() == null || userDto.getName().isEmpty() ) {
+            throw new IllegalArgumentException("Name cannot be empty");
         }
         if( userDto.getPassword() == null || userDto.getPassword().isEmpty() ) {
-            throw new IllegalArgumentException("password cannot be empty");
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+        if( userDto.getEmail() == null || userDto.getEmail().isEmpty() ) {
+            throw new IllegalArgumentException("Email cannot be empty");
         }
 
         // 2. 엔티티 생성
         UserEntity userEntity = UserEntity.builder()
+                .emp_id(userDto.getEmp_id())
+                .name(userDto.getName())
+                .password(passwordEncoder.encode(userDto.getPassword()))
                 .email(userDto.getEmail())
-                .userName(userDto.getUserName())
-                .password( passwordEncoder.encode(userDto.getPassword()) )
-                .roles("ROLE_USER")
-                .enable(false)
+                .enabled(false) // 이메일 인증 여부
                 .build();
 
         // 3. 엔티티 저장 -> 디비에 members 테이블에 저장
         userRepository.save(userEntity);
 
         // 4. 인증 이메일 발송
-        sendVaildEmail( userEntity );
+        sendValidEmail( userEntity );
     }
     // 이메일 전송 메소드
-    private void sendVaildEmail(UserEntity userEntity) {
+    private void sendValidEmail(UserEntity userEntity) {
         // 이메일 내용 안에 인증 요청을 GET방식으로 요청하도록 URL을 구성
         // 게이트웨이에 프리패스로 URL 등록되어야 한다
         // URL 합당하게 처리되기 위해서 토큰(일종의)값 같이 전달
@@ -77,7 +77,7 @@ public class UserService {
         redisTemplate.opsForValue().set(token,
                 userEntity.getEmail(), 6, TimeUnit.HOURS);
         // 3. URL 구성 -> 가입한 사용자의 이메일에서 인증메일에 전송된 링크
-        String url = "http://localhost:8080/user/vaild?token=" + token;
+        String url = "http://localhost:8080/user/valid?token=" + token;
         // 4. 메일 전송 (받는 사람주소, 제목, 내용)
         sendMail( userEntity.getEmail(), "Email 인증", "링크를 눌러서 인증: " + url );
     }
@@ -102,7 +102,7 @@ public class UserService {
         UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow( ()-> new IllegalArgumentException("사용자 오류(존재x)") );
         // 4. enable 컬럼 : f->t => 저장
-        userEntity.setEnable(true);
+        userEntity.setEnabled(true);
         userRepository.save(userEntity);
         // 5. 레디스 토큰 삭제
         redisTemplate.delete(token);

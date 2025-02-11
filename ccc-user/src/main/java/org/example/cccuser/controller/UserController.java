@@ -17,11 +17,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // 에코테스트
-    @GetMapping("/echo")
-    public ResponseEntity<String> echo() {
-        return ResponseEntity.ok("/user~ 에코 테스트");
-    }
     // 회원가입
     // post, json 데이터 전달 -> 엔티티, dto 고려하여 구성
     @PostMapping("/signup")
@@ -36,9 +31,9 @@ public class UserController {
         return ResponseEntity.ok("회원가입 성공");
     }
     // 이메일 검증 처리 -> 인증메일 처리 -> enable의 값을 f->t
-    // GET, /user/vaild, (*)엑세스토큰없이 전근가능해야함(로그인전->게이트웨이 수정), 파라미터 token,
-    @GetMapping("/vaild")
-    public ResponseEntity<String> vaild(@RequestParam("token") String token) {
+    // GET, /user/valid, (*)엑세스토큰없이 전근가능해야함(로그인전->게이트웨이 수정), 파라미터 token,
+    @GetMapping("/valid")
+    public ResponseEntity<String> valid(@RequestParam("token") String token) {
         try{
             // 고객 테이블 업데이트 - enable : f->t (유효할때만)
             userService.updateActivate( token );

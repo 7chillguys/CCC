@@ -7,79 +7,78 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.cccuser.dto.UserDto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Entity
-@Table(name="members")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 public class UserEntity implements UserDetails {
-    // email -> primary key
-    // username, password, hp, address, role
-    // enable (인증여부)
-    @Id
-    private String email;
 
-    @Column(name="username")
-    private String userName;
+    // emp_id -> primary key
+    @Id
+    private String emp_id;
+
+    @Column(name = "name")
+    private String name;
 
     private String password;
-    private String hp;
-    private String address;
-    private String roles;
-    private boolean enable; // 이메일 인증 여부
+
+    private String department;
+
+    private String position;
+
+    private String email;
+
+    private boolean enabled; // 이메일 인증 여부
 
     @Builder
-    public UserEntity(String email, String userName, String password, String hp, String address, String roles, boolean enable) {
-        this.email = email;
-        this.userName = userName;
+    public UserEntity(String emp_id, String name, String password, String position, String email, boolean enabled) {
+        this.emp_id = emp_id;
+        this.name = name;
         this.password = password;
-        this.hp = hp;
-        this.address = address;
-        this.roles = roles;
-        this.enable = enable;
+        this.position = position;
+        this.email = email;
+        this.enabled = enabled;
     }
 
     // ----------------
-    // UserDetails 파트 -> 6개 메소드
+    // UserDetails 파트
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 역활 설정 => ROLE_USER
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
+
+
     @Override
     public String getUsername() {
-        // email, password 통해서 로그인 예정
-        return email;
+        return emp_id;
     }
+
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;//UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;//UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;//UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
-    // 이메일 인증 여부를 체크
     @Override
     public boolean isEnabled() {
-        return enable;//UserDetails.super.isEnabled();
+        return enabled;
     }
 }
