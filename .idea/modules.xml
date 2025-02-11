@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/CCC.iml" filepath="$PROJECT_DIR$/.idea/CCC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ccc-user.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ccc-user.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ccc-user.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ccc-user.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka-server.main.iml" />
     </modules>
   </component>
 </project>
