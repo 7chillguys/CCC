@@ -22,7 +22,8 @@ public class UserEntity implements UserDetails {
 
     // emp_id -> primary key
     @Id
-    private String emp_id;
+    @Column(name = "emp_id")
+    private String empId;
 
     @Column(name = "name")
     private String name;
@@ -38,8 +39,8 @@ public class UserEntity implements UserDetails {
     private boolean enabled; // 이메일 인증 여부
 
     @Builder
-    public UserEntity(String emp_id, String name, String password,String department, String position, String email, boolean enabled) {
-        this.emp_id = emp_id;
+    public UserEntity(String empId, String name, String password, String department, String position, String email, boolean enabled) {
+        this.empId = this.empId;
         this.name = name;
         this.password = password;
         this.department = department;
@@ -59,7 +60,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return emp_id;
+        return empId;
     }
 
 
