@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div id="container">
+    <main>
+        <ul id="chat"></ul>
+        <footer>
+            <input id="messageInput" type="text" placeholder="메시지를 입력하세요" onkeyup="enterkey(event)" style="width: 100%; height: 25px;">
+            <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png" alt="">
+            <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png" alt="">
+        </footer>
+
+    </main>
+</div>
+
+<!-- ✅ 사용자 이름을 JavaScript에서 사용할 수 있도록 설정 -->
+<script th:inline="javascript">
+    let username = /*[[${name}]]*/ "Guest"; // ✅ Thymeleaf 변수를 JavaScript에서 사용 가능하도록 변환
+</script>
+
+<!-- Dependencies -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+<!-- ✅ WebSocket 및 채팅 기능을 `script.js`에서 실행 -->
+<script src="./js/script.js"></script>
+
+</body>
+</html>
