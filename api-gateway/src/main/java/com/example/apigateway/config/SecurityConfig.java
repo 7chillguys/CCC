@@ -54,7 +54,8 @@ public class SecurityConfig {
                             // 회원가입
                             "/user/signup",
                             "/user/valid",
-                            "/meals/**"
+                            "/ws/chat",
+                            "/**"
                             // 개별서비스별 URL -> 서비스를 추가하면서 구성
 
                             )

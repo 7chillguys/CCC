@@ -48,11 +48,10 @@ public class ApiGatewayApplication {
                         r->r.path("/auth/**").uri("lb://ccc-user")  )
                 .route("ccc-user",
                         r->r.path("/user/**").uri("lb://ccc-user")  )
-                .route("restaurant-menu",
-                        r->r.path("/meals/**").uri("lb://restaurant-menu")  )
-                // 상품조회, 장바구니 관리
-//                .route("ccc-products",
-//                        r->r.path("/pdts/**").uri("lb://ccc-products")  )
+                .route("msa-sb-user",
+                        r->r.path("/ws/chat").uri("lb://ccc-chat")  )
+                .route("msa-sb-user",
+                        r->r.path("/**").uri("lb://ccc-chat")  )
                 .build();
     }
 
