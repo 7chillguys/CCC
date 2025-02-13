@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>WebSocket Chat</title>
@@ -24,6 +24,17 @@
 <script th:inline="javascript">
     let username = /*[[${name}]]*/ "Guest"; // ✅ Thymeleaf 변수를 JavaScript에서 사용 가능하도록 변환
 </script>
+<script>
+    let username = localStorage.getItem("email") || "Guest";
+    let accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+        alert("로그인이 필요합니다.");
+        window.location.href = "login.html";
+    }
+</script>
+
+
 
 <!-- Dependencies -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
