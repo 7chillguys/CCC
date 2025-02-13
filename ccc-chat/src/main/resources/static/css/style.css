@@ -1,0 +1,139 @@
+/* ✅ 전체 화면 스타일 */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #8b8b8b;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* ✅ 채팅 컨테이너 */
+#container {
+  width: 400px;
+  max-width: 90%;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  white-space: normal;
+}
+
+/* ✅ 채팅 메시지 리스트 */
+#chat {
+  list-style: none;
+  padding: 10px;
+  height: 400px;
+  overflow-y: auto;
+  display: flex;
+  overflow-x: hidden;
+  flex-direction: column;
+}
+
+/* ✅ 메시지 컨테이너 */
+#chat .message-container {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+  max-width: 70%; /* 🔹 메시지 최대 길이 70% */
+  box-sizing: border-box; /* 🔹 너비 계산 오류 방지 */
+}
+
+#chat .message-container .username {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+/* ✅ 메시지 기본 스타일 */
+#chat .message {
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 10px;
+  word-break: break-word;
+  max-width: 100%; /* 🔹 컨테이너 안에서 100% 사용 */
+}
+
+/* ✅ 내가 보낸 메시지 스타일 */
+#chat .me {
+  align-self: flex-end;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* 🔹 정렬 오류 방지 */
+}
+
+#chat .me .username {
+  align-self: flex-end;
+}
+
+#chat .me .message {
+  background-color: #6fbced;
+  color: white;
+  border-top-right-radius: 0;
+}
+
+/* ✅ 상대방이 보낸 메시지 스타일 */
+#chat .you {
+  align-self: flex-start;
+  text-align: left;
+}
+
+#chat .you .message {
+  background-color: #58b666;
+  color: white;
+  border-top-left-radius: 0;
+}
+
+/* ✅ 시스템 메시지 스타일 */
+.system {
+  text-align: center;
+  background-color: #d3d3d3;
+  color: black;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  font-weight: bold;
+  display: flex; /* 🔹 중앙 정렬 */
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  max-width: 100%;
+}
+
+/* ✅ 채팅 입력 영역 */
+footer {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+#opinion {
+  flex-grow: 1;
+  height: 30px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 5px;
+  outline: none;
+}
+
+#opinion:focus {
+  border-color: #6fbced;
+}
+
+/* ✅ 아이콘 스타일 */
+footer img {
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+footer img:hover {
+  opacity: 1;
+}
