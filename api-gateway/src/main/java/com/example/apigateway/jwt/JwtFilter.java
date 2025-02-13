@@ -26,7 +26,7 @@ public class JwtFilter implements WebFilter, ApplicationContextAware {
     private final RedisTemplate<String, String> redisTemplate;
 
     private final String[] FREE_PATHS = {
-            "/**", "/auth/login", "/user/signup", "/user/valid", "/ws/chat"
+            "/**", "/auth/login", "/user/signup", "/user/valid", "/ws/chat", "/game/**", "/meals/**"
     };
 
     public JwtFilter(JwtTokenProvider jwtTokenProvider, RedisTemplate<String, String> redisTemplate) {

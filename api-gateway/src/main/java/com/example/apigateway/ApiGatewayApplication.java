@@ -52,6 +52,10 @@ public class ApiGatewayApplication {
                         r->r.path("/ws/chat").uri("lb://ccc-chat")  )
                 .route("msa-sb-user",
                         r->r.path("/**").uri("lb://ccc-chat")  )
+//                .route("ccc-game",
+//                        r->r.path("/game/**").uri("lb://ccc-game")  )
+//                .route("restaurant-menu",
+//                        r->r.path("/meals/**").uri("lb://restaurant-menu")  )
                 .build();
     }
 
