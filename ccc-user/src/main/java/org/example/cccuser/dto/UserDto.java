@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 @ToString
 public class UserDto{
     @NotNull
-    private String emp_id;
+    private String empId;
     @NotNull
     private String name;
     @NotNull

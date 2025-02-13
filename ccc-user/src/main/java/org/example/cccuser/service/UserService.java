@@ -1,6 +1,7 @@
 package org.example.cccuser.service;
 
 import org.example.cccuser.dto.UserDto;
+import org.example.cccuser.dto.UserReqDto;
 import org.example.cccuser.entity.UserEntity;
 import org.example.cccuser.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -48,7 +50,7 @@ public class UserService {
 
         // 2. 엔티티 생성
         UserEntity userEntity = UserEntity.builder()
-                .emp_id(userDto.getEmp_id())
+                .empId(userDto.getEmpId())
                 .name(userDto.getName())
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .department(userDto.getDepartment())
@@ -109,4 +111,18 @@ public class UserService {
         // 5. 레디스 토큰 삭제
         redisTemplate.delete(token);
     }
+
+
+    public UserReqDto getUserByEmpId(String empId) {
+        return userRepository.findByEmpId(empId)
+                .map(user -> UserReqDto.builder()
+                        .empId(user.getEmpId())
+                        .name(user.getName())
+                        .department(user.getDepartment())
+                        .position(user.getPosition())
+                        .email(user.getEmail())
+                        .build())
+                .orElse(null); // 사용자를 못 찾으면 null 반환
+    }
+
 }

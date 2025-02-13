@@ -1,10 +1,10 @@
 package org.example.cccuser.controller;
 
 import org.example.cccuser.dto.UserDto;
+import org.example.cccuser.dto.UserReqDto;
 import org.example.cccuser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -44,5 +44,17 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("서버측 내부 오류 : " + e.getMessage());
         }
+    }
+
+    // 회원정보 조회
+    @GetMapping("/info/{empId}")
+    public ResponseEntity<?> getUserByEmpId(@PathVariable String empId) {
+        UserReqDto user = userService.getUserByEmpId(empId);
+
+        if (user == null) {
+            return ResponseEntity.status(404).body("해당 회원번호의 사용자를 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(user);
     }
 }

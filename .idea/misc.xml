@@ -3,6 +3,7 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/api-gateway" />
+    <file type="web" url="file://$PROJECT_DIR$/ccc-menu" />
     <file type="web" url="file://$PROJECT_DIR$/ccc-user" />
     <file type="web" url="file://$PROJECT_DIR$/eureka-server" />
   </component>
