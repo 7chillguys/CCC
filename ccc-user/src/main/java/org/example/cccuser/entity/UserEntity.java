@@ -40,7 +40,7 @@ public class UserEntity implements UserDetails {
 
     @Builder
     public UserEntity(String empId, String name, String password, String department, String position, String email, boolean enabled) {
-        this.empId = this.empId;
+        this.empId = empId;
         this.name = name;
         this.password = password;
         this.department = department;
