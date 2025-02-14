@@ -134,3 +134,106 @@ function displayMessage(sender, message) {
 document.addEventListener("DOMContentLoaded", function () {
     connectWebSocket();
 });
+
+
+
+function displayFileMessage(sender, fileUrl) {
+    let chat = document.getElementById("chat");
+    let messageItem = document.createElement("li");
+    let messageContainer = document.createElement("div");
+    let usernameLabel = document.createElement("div");
+    let fileLink = document.createElement("a");
+
+    messageContainer.classList.add("message-container");
+    fileLink.href = fileUrl;
+    fileLink.target = "_blank";
+    fileLink.textContent = "📎 파일 다운로드";
+
+    usernameLabel.className = "username";
+    usernameLabel.textContent = sender;
+
+    messageContainer.appendChild(usernameLabel);
+    messageContainer.appendChild(fileLink);
+    messageItem.appendChild(messageContainer);
+    chat.appendChild(messageItem);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function openImage(src) {
+    const imagePopup = window.open("", "_blank");
+    imagePopup.document.write(`<img src="${src}" style="width:100%;">`);
+}
+
+//  파일 업로드 핸들러
+document.getElementById("uploadImage").addEventListener("click", () => {
+    document.getElementById("fileInput").accept = "image/*";
+    document.getElementById("fileInput").click();
+});
+
+document.getElementById("uploadFile").addEventListener("click", () => {
+    document.getElementById("fileInput").accept = ".pdf,.doc,.docx,.txt,.zip";
+    document.getElementById("fileInput").click();
+});
+
+document.getElementById("fileInput").addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await fetch("/chat/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            const fileUrl = await response.text();
+
+            if (file.type.startsWith("image")) {
+                websocket.send(JSON.stringify({ sender: username, message: "IMG:" + fileUrl }));
+            } else {
+                websocket.send(JSON.stringify({ sender: username, message: "FILE:" + fileUrl }));
+            }
+        }
+    } catch (error) {
+        console.error("파일 업로드 실패", error);
+    }
+});
+
+if (data.message.startsWith("IMG:")) {
+    displayImageMessage(data.sender, data.message.replace("IMG:", ""));
+} else if (data.message.startsWith("FILE:")) {
+    displayFileMessage(data.sender, data.message.replace("FILE:", ""));
+} else {
+    displayMessage(data.sender, data.message);
+}
+
+function displayImageMessage(sender, imageUrl) {
+    let chat = document.getElementById("chat");
+    let messageItem = document.createElement("li");
+    let messageContainer = document.createElement("div");
+    let usernameLabel = document.createElement("div");
+    let imageElement = document.createElement("img");
+
+    messageContainer.classList.add("message-container");
+    imageElement.src = imageUrl;
+    imageElement.classList.add("chat-image");
+    imageElement.onclick = () => openImage(imageUrl);
+
+    usernameLabel.className = "username";
+    usernameLabel.textContent = sender;
+
+    messageContainer.appendChild(usernameLabel);
+    messageContainer.appendChild(imageElement);
+    messageItem.appendChild(messageContainer);
+    chat.appendChild(messageItem);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function openImage(src) {
+    const imagePopup = window.open("", "_blank");
+    imagePopup.document.write(`<img src="${src}" style="width:100%;">`);
+}

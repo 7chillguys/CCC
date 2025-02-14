@@ -26,8 +26,16 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         log.info("📩 메시지 수신: {}", message.getPayload());
 
-        // 받은 메시지를 모든 클라이언트에게 전송 (브로드캐스트)
-        broadcastMessage(message.getPayload());
+        String payload = message.getPayload();
+
+        // ✅ 파일 업로드 메시지 감지
+        if (payload.startsWith("FILE_UPLOAD:")) {
+            String fileUrl = payload.replace("FILE_UPLOAD:", "").trim();
+            broadcastFileMessage(fileUrl);
+        } else {
+            // 일반 텍스트 메시지 전송
+            broadcastMessage(payload);
+        }
     }
 
     @Override
@@ -36,13 +44,26 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         log.info("🔌 WebSocket 연결 종료: {}", session.getId());
     }
 
-    // ✅ Kafka에서 받은 메시지를 WebSocket으로 전송하는 기능 추가
+    // ✅ 일반 메시지 브로드캐스트
     public void broadcastMessage(String message) throws IOException {
         log.info("📢 WebSocket으로 메시지 브로드캐스트: {}", message);
 
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
                 session.sendMessage(new TextMessage(message));
+            }
+        }
+    }
+
+    //  파일 업로드 메시지 브로드캐스트
+    public void broadcastFileMessage(String fileUrl) throws IOException {
+        log.info("📢 파일 업로드 브로드캐스트: {}", fileUrl);
+
+        String fileMessage = "<a href='" + fileUrl + "' target='_blank'><img src='" + fileUrl + "' style='max-width: 200px; max-height: 200px; border-radius: 5px;'/></a>";
+
+        for (WebSocketSession session : sessions) {
+            if (session.isOpen()) {
+                session.sendMessage(new TextMessage(fileMessage));
             }
         }
     }
