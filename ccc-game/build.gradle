@@ -45,7 +45,13 @@ dependencies {
     // 유레카 클라이언트
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
-
+    // 향후 추가
+    // kafka : 주문, 결제 등등 이벤트 발생시 송수신 처리 등등 비동기 구성 -> 메세징 서비스
+    //         서비스간 통신용도
+    implementation 'org.apache.kafka:kafka-streams'
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    // (*)Jackson | gson : JSON 데이터 처리 -> 데이터 형태 파싱
 }
 
 dependencyManagement {

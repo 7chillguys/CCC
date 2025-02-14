@@ -1,7 +1,10 @@
 package org.example.cccgame.dto.ladder;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+
+@NoArgsConstructor
 @Data
 public class ResultDto {
     private String playerName;
