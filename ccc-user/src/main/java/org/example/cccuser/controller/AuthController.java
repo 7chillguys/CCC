@@ -21,7 +21,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginReqDto loginReqDto,
                                         HttpServletResponse response) {
-        return ResponseEntity.ok( authService.login(loginReqDto, response) );
+        return authService.login(loginReqDto, response);
     }
 
     // 로그아웃 -> 로그인 이후 진행 -> 인증값 (토큰, 게이트웨이에서 설정한 값) 체크 : 헤더를 타고 전달
