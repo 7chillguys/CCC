@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 // spring webflux  방식의 시큐리티 설정 필요
@@ -32,49 +33,59 @@ public class SecurityConfig {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         // http 설정
         http
-            // CORS 설정 -> 기본값 적용
-            .cors(Customizer.withDefaults())
-            // CSRF 공격에 대한 보호 설정 -> 비활설 처리
-            .csrf(ServerHttpSecurity.CsrfSpec::disable)
-            // iframe 허용에 대한 설정
-            // X-Frame-Options HTTP 헤더에 대한 비활성화 처리 -> iframe 허용
-            .headers( header -> header.frameOptions(ServerHttpSecurity.HeaderSpec.FrameOptionsSpec::disable) )
+                // CORS 설정 -> 기본값 적용
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.addAllowedOrigin("http://localhost:3000");  // React 앱의 URL
+                    config.addAllowedMethod("*");                      // 모든 HTTP 메서드 허용
+                    config.addAllowedHeader("*");                      // 모든 헤더 허용
+                    config.setAllowCredentials(true);                  // 쿠키 또는 인증 정보 허용
+                    config.addExposedHeader("AccessToken");           // 클라이언트에서 접근할 수 있도록 헤더 추가
+                    config.addExposedHeader("RefreshToken");          // 클라이언트에서 접근할 수 있도록 헤더 추가
+                    config.addExposedHeader("X-Auth-User");           // 클라이언트에서 접근할 수 있도록 헤더 추가
+                    return config;
+                }))
+                // CSRF 공격에 대한 보호 설정 -> 비활설 처리
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                // iframe 허용에 대한 설정
+                // X-Frame-Options HTTP 헤더에 대한 비활성화 처리 -> iframe 허용
+                .headers( header -> header.frameOptions(ServerHttpSecurity.HeaderSpec.FrameOptionsSpec::disable) )
 
-            // 보안 컨텍스트 저정소 활성화 부분 -> 레디스 사용
-            // 인증, 세션관리를 스프링에서 처리하지 않고, 별도로 관리한다면 -> 옵션 적용 가능
-            // Context -> 세션을 보관하는 곳
-            .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+                // 보안 컨텍스트 저정소 활성화 부분 -> 레디스 사용
+                // 인증, 세션관리를 스프링에서 처리하지 않고, 별도로 관리한다면 -> 옵션 적용 가능
+                // Context -> 세션을 보관하는 곳
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 
-            // 인증 없이 접근 가능한 페이지 (회원가입, 로그인, 기타 서비스별 별도 페이지들 가능)
-            .authorizeExchange( authorizeExchangeSpec -> authorizeExchangeSpec
-                    // 인증없이 접근 가능
-                    .pathMatchers("/",
-                            // 로그인
-                            "/auth/login",
-                            // 회원가입
-                            "/user/signup",
-                            "/user/valid",
-                            "/ws/chat"
+                // 인증 없이 접근 가능한 페이지 (회원가입, 로그인, 기타 서비스별 별도 페이지들 가능)
+                .authorizeExchange( authorizeExchangeSpec -> authorizeExchangeSpec
+                        // 인증없이 접근 가능
+                        .pathMatchers("/",
+                                // 로그인
+                                "/auth/login",
+                                // 회원가입
+                                "/user/signup",
+                                "/user/valid",
+                                "/ws/chat"
 //                            "/game/**",
 //                            "/meals/**"
-                            // 개별서비스별 URL -> 서비스를 추가하면서 구성
+                                // 개별서비스별 URL -> 서비스를 추가하면서 구성
 
-                            )
-                    .permitAll()
-                    // 나머지는 인증해야 접근 가능
-                    .anyExchange().authenticated() )
-            // 나머지 API들은 인증해야 가능
-            // 간편한 예외처리 -> 오류 처리 를 위한 설정(인증->로그인없이 서비스 접근, 권한->관리자가 아닌데 관리자 메뉴 진입)
-            // 인증 오류 -> 401, 권한 오류 403 자동 처리, 필요시 추가 가능
-            .exceptionHandling(exception -> {
-                exception
-                        .accessDeniedHandler(new CustomAccessDeniedHandler())      // 403
-                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()); // 401
-            })
-            // JWT 인증 처리 -> 필터 등록을 통해서 해결
-            // 요청에서 JWT 처리 반영, 토큰 확인, 검증하는 필터로 사용 (본격적 요청이 처리되기 전)
-            // 인증처리를 해당 필터를 통해서 진행한다!
-            .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHORIZATION);
+                        )
+                        .permitAll()
+                        // 나머지는 인증해야 접근 가능
+                        .anyExchange().authenticated() )
+                // 나머지 API들은 인증해야 가능
+                // 간편한 예외처리 -> 오류 처리 를 위한 설정(인증->로그인없이 서비스 접근, 권한->관리자가 아닌데 관리자 메뉴 진입)
+                // 인증 오류 -> 401, 권한 오류 403 자동 처리, 필요시 추가 가능
+                .exceptionHandling(exception -> {
+                    exception
+                            .accessDeniedHandler(new CustomAccessDeniedHandler())      // 403
+                            .authenticationEntryPoint(new CustomAuthenticationEntryPoint()); // 401
+                })
+                // JWT 인증 처리 -> 필터 등록을 통해서 해결
+                // 요청에서 JWT 처리 반영, 토큰 확인, 검증하는 필터로 사용 (본격적 요청이 처리되기 전)
+                // 인증처리를 해당 필터를 통해서 진행한다!
+                .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHORIZATION);
 
         return http.build();
     }

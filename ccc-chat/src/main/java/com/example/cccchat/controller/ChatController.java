@@ -1,71 +1,60 @@
 package com.example.cccchat.controller;
 
-import org.springframework.http.HttpStatus;
+import com.example.cccchat.websocket.CustomWebSocketHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.example.cccchat.websocket.CustomWebSocketHandler;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
-import jakarta.servlet.http.HttpSession;
-
-@Controller
+@RestController
 @RequestMapping("/chat")
 public class ChatController {
 
-    private final RestTemplate restTemplate;
     private final CustomWebSocketHandler webSocketHandler;
 
-    public ChatController(RestTemplate restTemplate, CustomWebSocketHandler webSocketHandler) {
-        this.restTemplate = restTemplate;
+    @Autowired
+    public ChatController(CustomWebSocketHandler webSocketHandler) {
         this.webSocketHandler = webSocketHandler;
     }
 
-    @GetMapping("/")
-    public String index() {
-        return "error";
-    }
-
     @GetMapping("/room")
-    public String chattingRoom(@RequestParam(value = "email", required = false) String email, Model model) {
-        if (email == null) {
-            model.addAttribute("name", "Guest");
-        } else {
-            model.addAttribute("name", email);
-        }
-        return "chattingRoom2";
+    public ResponseEntity<Map<String, String>> getChatRoom(@RequestParam("email") String email) {
+        System.out.println("✅ 채팅방 입장 요청: " + email); // ✅ 요청 로그 추가
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", "채팅방 입장 성공");
+        response.put("email", email);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/send")
+    public ResponseEntity<String> sendMessage(@RequestBody Map<String, String> messageData) {
+        System.out.println("✅ 메시지 전송 요청: " + messageData.get("sender") + " - " + messageData.get("message")); // ✅ 요청 로그 추가
+
+        String sender = messageData.get("sender");
+        String message = messageData.get("message");
+
+        if (sender == null || message == null) {
+            return ResponseEntity.badRequest().body("잘못된 요청");
+        }
+
         try {
+            // ✅ JSON 형태로 변환
+            Map<String, String> jsonMap = new HashMap<>();
+            jsonMap.put("sender", sender);
+            jsonMap.put("message", message);
+            String jsonMessage = new ObjectMapper().writeValueAsString(jsonMap);
 
-            String uploadDir = "uploads/";
-            File uploadFolder = new File(uploadDir);
-            if (!uploadFolder.exists()) {
-                uploadFolder.mkdirs(); // 폴더 없으면 생성
-            }
-
-            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir + fileName);
-            file.transferTo(filePath.toFile());
-
-            String fileUrl = "/uploads/" + fileName;
-
-
-            webSocketHandler.broadcastMessage("📎 파일 업로드됨: " + fileUrl);
-
-            return ResponseEntity.ok(fileUrl);
+            webSocketHandler.broadcastMessage(jsonMessage);
+            return ResponseEntity.ok("메시지 전송 성공");
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드 실패");
+            return ResponseEntity.status(500).body("메시지 전송 실패");
         }
     }
+
 }
+
