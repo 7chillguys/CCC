@@ -37,7 +37,7 @@ jobs:
       # RDS 세팅된 이후 진행
       # 현재는 skip
       #echo "${{ secrets.APPLICATION_PRO }}" > ./src/main/resources/application.properties
-      #          ls ./src/main/resources/
+      #ls ./src/main/resources/
       - name: 여러 application.properties 동적 생성
         run: |
         # 패키지별로 application.properties 동적 생성
