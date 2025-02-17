@@ -56,6 +56,11 @@ jobs:
           ls ./api-gateway/src/main/resources/
           ls ./eureka-server/src/main/resources/
 
+          cat ./ccc-game/src/main/resources/application.properties
+          cat ./ccc-menu/src/main/resources/application.properties
+          cat ./api-gateway/src/main/resources/application.properties
+          cat ./eureka-server/src/main/resources/application.properties
+
 
       # build 준비
       # chmod +x ./gradlew : 퍼미션 오류 발생시 처리
