@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 // spring webflux  방식의 시큐리티 설정 필요
@@ -33,7 +34,17 @@ public class SecurityConfig {
         // http 설정
         http
             // CORS 설정 -> 기본값 적용
-            .cors(Customizer.withDefaults())
+            .cors(cors -> cors.configurationSource(request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.addAllowedOrigin("http://localhost:3000");  // React 앱의 URL
+                config.addAllowedMethod("*");                      // 모든 HTTP 메서드 허용
+                config.addAllowedHeader("*");                      // 모든 헤더 허용
+                config.setAllowCredentials(true);                  // 쿠키 또는 인증 정보 허용
+                config.addExposedHeader("AccessToken");           // 클라이언트에서 접근할 수 있도록 헤더 추가
+                config.addExposedHeader("RefreshToken");          // 클라이언트에서 접근할 수 있도록 헤더 추가
+                config.addExposedHeader("X-Auth-User");           // 클라이언트에서 접근할 수 있도록 헤더 추가
+                return config;
+            }))
             // CSRF 공격에 대한 보호 설정 -> 비활설 처리
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             // iframe 허용에 대한 설정
@@ -54,8 +65,9 @@ public class SecurityConfig {
                             // 회원가입
                             "/user/signup",
                             "/user/valid",
-                            "/ws/chat",
-                            "/**"
+                            "/ws/chat"
+//                            "/game/**",
+//                            "/meals/**"
                             // 개별서비스별 URL -> 서비스를 추가하면서 구성
 
                             )

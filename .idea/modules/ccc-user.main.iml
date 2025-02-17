@@ -5,18 +5,4 @@
       <sourceFolder url="file://$MODULE_DIR$/../../ccc-user/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
     </content>
   </component>
-  <component name="FacetManager">
-    <facet type="jpa" name="JPA">
-      <configuration>
-        <setting name="validation-enabled" value="true" />
-        <setting name="provider-name" value="Hibernate" />
-        <datasource-mapping>
-          <factory-entry name="entityManagerFactory" value="b08aba8f-5ec1-4946-bed3-e1300ccfdf9f" />
-        </datasource-mapping>
-        <naming-strategy-map>
-          <unit-entry name="entityManagerFactory" />
-        </naming-strategy-map>
-      </configuration>
-    </facet>
-  </component>
 </module>
