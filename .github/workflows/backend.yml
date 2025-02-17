@@ -71,10 +71,10 @@ jobs:
         # 5. 빌드된 산출물의 목록 확인(ls ./build/libs)
         #    demo-deploy-0.0.1-SNAPSHOT-plain.jar ...
         run: |
-          chmod +x ./gradlew
           # 각 패키지별로 빌드를 분리하여 실행
           # api-gateway 패키지
           cd ./api-gateway
+          chmod +x ./gradlew
           ./gradlew clean build
           ls ./build/libs
 
@@ -90,16 +90,19 @@ jobs:
           
           # eureka-server 패키지
            cd ../eureka-server
+           chmod +x ./gradlew
            ./gradlew clean build
            ls ./build/libs
           
           # ccc-game 패키지
           cd ../ccc-game
+          chmod +x ./gradlew
           ./gradlew clean build
           ls ./build/libs
 
           # ccc-menu 패키지
           cd ../ccc-menu
+          chmod +x ./gradlew
           ./gradlew clean build
           ls ./build/libs
 
