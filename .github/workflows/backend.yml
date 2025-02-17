@@ -47,7 +47,7 @@ jobs:
           echo "${{ secrets.MENU_PRO }}" > ./ccc-menu/src/main/resources/application.properties
           echo "${{ secrets.API_GATEWAY_PRO }}" > ./api-gateway/src/main/resources/application.properties
           echo "${{ secrets.EUREKA_PRO }}" > ./eureka-server/src/main/resources/application.properties
-          
+
           # 확인용 디렉토리 리스팅
           # ls ./ccc-chat/src/main/resources/  
           # ls ./ccc-user/src/main/resources/
@@ -56,10 +56,8 @@ jobs:
           ls ./api-gateway/src/main/resources/
           ls ./eureka-server/src/main/resources/
 
-          cat ./ccc-game/src/main/resources/application.properties
-          cat ./ccc-menu/src/main/resources/application.properties
-          cat ./api-gateway/src/main/resources/application.properties
-          cat ./eureka-server/src/main/resources/application.properties
+          echo "GAME_PRO: ${{ secrets.GAME_PRO }}"
+          echo "MENU_PRO: ${{ secrets.MENU_PRO }}"
 
 
       # build 준비
