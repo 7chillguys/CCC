@@ -176,6 +176,7 @@ jobs:
             mkdir /home/ubuntu/server/web
             # mv /home/ubuntu/server/demo/ccc-chat/run.jar /home/ubuntu/server/web/ccc-chat/run.jar
             # mv /home/ubuntu/server/demo/ccc-user/run.jar /home/ubuntu/server/web/ccc-user/run.jar
+            ls /home/ubuntu/server/demo/ccc-game/run.jar
             mv /home/ubuntu/server/demo/ccc-game/run.jar /home/ubuntu/server/web/ccc-game/run.jar
             mv /home/ubuntu/server/demo/ccc-menu/run.jar /home/ubuntu/server/web/ccc-menu/run.jar
             mv /home/ubuntu/server/demo/api-gateway/run.jar /home/ubuntu/server/web/api-gateway/run.jar
