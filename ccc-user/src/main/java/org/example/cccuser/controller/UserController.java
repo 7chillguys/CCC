@@ -36,6 +36,7 @@ public class UserController {
     public ResponseEntity<String> valid(@RequestParam("token") String token) {
         try{
             // 고객 테이블 업데이트 - enable : f->t (유효할때만)
+
             userService.updateActivate( token );
             return ResponseEntity.ok("이메일 인증 완료. 계정이 활성화 되었습니다.");
         } catch (IllegalArgumentException e) {
