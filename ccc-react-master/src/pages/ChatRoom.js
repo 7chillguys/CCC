@@ -18,7 +18,7 @@ function ChatRoom() {
 
         // ✅ WebSocket 중복 연결 방지
         if (!websocket.current || websocket.current.readyState === WebSocket.CLOSED) {
-            websocket.current = new WebSocket("ws://localhost:8080/ws/chat");
+            websocket.current = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
             websocket.current.onopen = () => {
                 console.log("✅ WebSocket 연결 성공!");
@@ -73,7 +73,7 @@ function ChatRoom() {
 
         try {
             await axios.post(
-                "http://localhost:8080/chat/send", // ✅ API Gateway 경유
+                "/chat/send", // ✅ API Gateway 경유
                 { sender: email, message },
                 { headers: { Authorization: accessToken, "Content-Type": "application/json" } }
             );

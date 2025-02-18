@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 function SignUp() {
     const [empId, setEmpId] = useState('');
@@ -16,7 +17,7 @@ function SignUp() {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8080/user/signup', {
+            const response = await axios.post('/user/signup', {
                 empId,
                 name,
                 password,

@@ -1,0 +1,66 @@
+name: front for ci/cd
+
+on:
+    push:
+        branches:
+            - CCC-36-git-action-front
+    pull_request:
+        branches:
+            - CCC-36-git-action-front
+
+jobs:
+    react-deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository Resources
+              uses: actions/checkout@v2
+
+            - name: .env 환경 변수 동적 생성
+              run : |
+                  echo "${{ secrets.CLIENT_ENV }}" > .env
+                  pwd
+                  ls -al
+
+            # .env 설정 아래에 추가
+            - name: nodejs install
+              uses: actions/setup-node@v2
+              with:
+                  node-version: '22'
+
+            # node_modules 생성
+            - name: npm install
+              run: npm install
+
+            # 단위테스트 (추후 진행)
+            #- name: 단위테스트
+            #  run: npm test
+
+            - name: npm run build
+              run: |
+                  npm run build
+                  ls ./build
+
+            # build EC2 업로드
+            - name: EC2에 빌드된 파일/폴더 업로드
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                  host: ${{ secrets.EC2_HOST }}
+                  username: ${{ secrets.EC2_USER }}
+                  key: ${{ secrets.EC2_KEY }}
+                  source: "./build/*"
+                  target: "/home/ubuntu/client"
+
+            # EC2에 접속하여 서버 재시작
+            # /var/www/html/ 웹서버의 기본 디렉토리
+            - name: SSH로 EC2에 접속 후 서버 재시작
+              uses: appleboy/ssh-action@v1.2.0
+              with:
+                  host: ${{ secrets.EC2_HOST }}
+                  username: ${{ secrets.EC2_USER }}
+                  key: ${{ secrets.EC2_KEY }}
+                  script_stop: true
+                  script: |
+                      sudo rm -rf /var/www/html/*
+                      sudo mv /home/ubuntu/client/build/* /var/www/html/
+                      sudo systemctl restart nginx
+                      sudo rm -rf /home/ubuntu/client
