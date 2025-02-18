@@ -50,7 +50,7 @@ jobs:
                   username: ${{ secrets.EC2_USER }}
                   key: ${{ secrets.EC2_KEY }}
                   source: "/home/runner/work/CCC/CCC/ccc-react-master/build/*"
-                  target: "/home/ubuntu/client"
+                  target: "/home/ubuntu/client/github/workspace/ccc-react-master/build"
 
             # EC2에 접속하여 서버 재시작
             # /var/www/html/ 웹서버의 기본 디렉토리
