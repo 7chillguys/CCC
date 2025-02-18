@@ -140,7 +140,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: ./api-gateway/run.jar, ./ccc-game/run.jar, ./ccc-menu/run.jar, jar ./eureka-server/run.jar
+          source: ./api-gateway/run.jar, ./ccc-game/run.jar, ./ccc-menu/run.jar, ./eureka-server/run.jar
           target: /home/ubuntu/server/demo
 
       # ec2 접속,서버가동!!
