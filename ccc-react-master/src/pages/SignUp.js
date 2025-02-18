@@ -17,7 +17,7 @@ function SignUp() {
         e.preventDefault();
 
         try {
-            const response = await axios.post('/user/signup', {
+             await axios.post('/user/signup', {
                 empId,
                 name,
                 password,

@@ -54,7 +54,7 @@ function ChatRoom() {
                 websocket.current.close();
             }
         };
-    }, []); // ✅ 한 번만 실행됨
+    }, [accessToken, email, sendJoinMessage]); // ✅ 한 번만 실행됨
 
     const sendJoinMessage = () => {
         if (!email || !websocket.current || websocket.current.readyState !== WebSocket.OPEN) return;
