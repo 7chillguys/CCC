@@ -46,7 +46,7 @@ jobs:
           echo "${{ secrets.GAME_PRO }}" > ./ccc-game/src/main/resources/application.properties
           echo "${{ secrets.MENU_PRO }}" > ./ccc-menu/src/main/resources/application.properties
           echo "${{ secrets.API_GATEWAY_PRO }}" > ./api-gateway/src/main/resources/application.properties
-          echo "${{ secrets.EUREKA_PRO }}" > ./eureka-server/src/main/resources/application.properties
+          echo "${{ secrets.EUREKA_YML }}" > ./eureka-server/src/main/resources/application.yml
           # 확인용 디렉토리 리스팅
           ls ./ccc-chat/src/main/resources/  
           ls ./ccc-user/src/main/resources/
@@ -170,8 +170,8 @@ jobs:
           script: |
             rm -rf /home/ubuntu/server/web
             mkdir /home/ubuntu/server/web
-             mkdir -p /home/ubuntu/server/web/ccc-chat
-              mkdir -p /home/ubuntu/server/web/ccc-user
+            mkdir -p /home/ubuntu/server/web/ccc-chat
+            mkdir -p /home/ubuntu/server/web/ccc-user
             mkdir -p /home/ubuntu/server/web/ccc-game
             mkdir -p /home/ubuntu/server/web/ccc-menu
             mkdir -p /home/ubuntu/server/web/api-gateway
