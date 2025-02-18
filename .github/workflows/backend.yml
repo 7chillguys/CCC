@@ -79,19 +79,21 @@ jobs:
 
           # ccc-chat 패키지
           cd ../ccc-chat
+          chmod +x ./gradlew
           ./gradlew clean build
           ls ./build/libs
           
           # ccc-user 패키지
           cd ../ccc-user
+          chmod +x ./gradlew
           ./gradlew clean build
           ls ./build/libs
           
           # eureka-server 패키지
-           cd ../eureka-server
-           chmod +x ./gradlew
-           ./gradlew clean build
-           ls ./build/libs
+          cd ../eureka-server
+          chmod +x ./gradlew
+          ./gradlew clean build
+          ls ./build/libs
           
           # ccc-game 패키지
           cd ../ccc-game
