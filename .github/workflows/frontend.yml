@@ -37,6 +37,7 @@ jobs:
             #  run: npm test
 
             - name: npm run build
+              working-directory: /home/runner/work/CCC/CCC/ccc-react-master
               run: |
                   npm run build
                   ls ./build
