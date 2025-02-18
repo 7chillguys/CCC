@@ -41,7 +41,7 @@ jobs:
       - name: 여러 application.properties 동적 생성
         run: |
           # 패키지별로 application.properties 동적 생성
-          echo "${{ secrets.CHAT_PRO }}" > ./ccc-chat/src/main/resources/application.properties
+          # echo "${{ secrets.CHAT_PRO }}" > ./ccc-chat/src/main/resources/application.properties
           echo "${{ secrets.USER_PRO }}" > ./ccc-user/src/main/resources/application.properties
           echo "${{ secrets.GAME_PRO }}" > ./ccc-game/src/main/resources/application.properties
           echo "${{ secrets.MENU_PRO }}" > ./ccc-menu/src/main/resources/application.properties
@@ -49,7 +49,7 @@ jobs:
           echo "${{ secrets.EUREKA_PRO }}" > ./eureka-server/src/main/resources/application.properties
 
           # 확인용 디렉토리 리스팅
-          ls ./ccc-chat/src/main/resources/  
+          # ls ./ccc-chat/src/main/resources/  
           ls ./ccc-user/src/main/resources/
           ls ./ccc-game/src/main/resources/
           ls ./ccc-menu/src/main/resources/
@@ -78,10 +78,10 @@ jobs:
           ls ./build/libs
 
           # ccc-chat 패키지
-          cd ../ccc-chat
-          chmod +x ./gradlew
-          ./gradlew clean build
-          ls ./build/libs
+          # cd ../ccc-chat
+          # chmod +x ./gradlew
+          # ./gradlew clean build
+          # ls ./build/libs
           
           # ccc-user 패키지
           cd ../ccc-user
@@ -111,7 +111,7 @@ jobs:
       # 파일 위치를 변경하면서 이름도 변경 -> mv
       - name: 관리상 빌드된 결과물의 이름을 변경 처리
         run: |
-          mv ./ccc-chat/build/libs/*SNAPSHOT.jar ./ccc-chat/run.jar
+          # mv ./ccc-chat/build/libs/*SNAPSHOT.jar ./ccc-chat/run.jar
           mv ./ccc-user/build/libs/*SNAPSHOT.jar ./ccc-user/run.jar
           mv ./ccc-game/build/libs/*SNAPSHOT.jar ./ccc-game/run.jar
           mv ./ccc-menu/build/libs/*SNAPSHOT.jar ./ccc-menu/run.jar
@@ -138,7 +138,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: ./api-gateway/run.jar, ./ccc-chat/run.jar, ./ccc-game/run.jar, ./ccc-menu/run.jar, ./ccc-user/run.jar, ./eureka-server/run.jar
+          source: ./api-gateway/run.jar, ./ccc-game/run.jar, ./ccc-menu/run.jar, ./ccc-user/run.jar, ./eureka-server/run.jar
           target: /home/ubuntu/server/demo
 
       # ec2 접속,서버가동!!
@@ -172,15 +172,15 @@ jobs:
           script: |
             rm -rf /home/ubuntu/server/web
             mkdir /home/ubuntu/server/web
+            # mkdir -p /home/ubuntu/server/web/ccc-chat
             mkdir -p /home/ubuntu/server/web/ccc-user
-            mkdir -p /home/ubuntu/server/web/ccc-chat
             mkdir -p /home/ubuntu/server/web/ccc-game
             mkdir -p /home/ubuntu/server/web/ccc-menu
             mkdir -p /home/ubuntu/server/web/api-gateway
             mkdir -p /home/ubuntu/server/web/eureka-server
             ls /home/ubuntu/server/demo/ccc-game/run.jar
             mv /home/ubuntu/server/demo/ccc-user/run.jar /home/ubuntu/server/web/ccc-user/run.jar
-            mv /home/ubuntu/server/demo/ccc-chat/run.jar /home/ubuntu/server/web/ccc-chat/run.jar
+            # mv /home/ubuntu/server/demo/ccc-chat/run.jar /home/ubuntu/server/web/ccc-chat/run.jar
             mv /home/ubuntu/server/demo/ccc-game/run.jar /home/ubuntu/server/web/ccc-game/run.jar
             mv /home/ubuntu/server/demo/ccc-menu/run.jar /home/ubuntu/server/web/ccc-menu/run.jar
             mv /home/ubuntu/server/demo/api-gateway/run.jar /home/ubuntu/server/web/api-gateway/run.jar
@@ -188,7 +188,7 @@ jobs:
             cd /home/ubuntu/server/web
             sudo fuser -k -n tcp 8080 || true
             nohup java -jar ccc-user/run.jar > ./ccc-user/output.log 2>&1 &
-            nohup java -jar ccc-chat/run.jar > ./ccc-chat/output.log 2>&1 &
+            # nohup java -jar ccc-chat/run.jar > ./ccc-chat/output.log 2>&1 &
             nohup java -jar ccc-game/run.jar > ./ccc-game/output.log 2>&1 &
             nohup java -jar ccc-menu/run.jar > ./ccc-menu/output.log 2>&1 &
             nohup java -jar api-gateway/run.jar > ./api-gateway/output.log 2>&1 &
