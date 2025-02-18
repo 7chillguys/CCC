@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 function Home() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,7 +42,7 @@ function Home() {
             }
 
             const response = await axios.post(
-                'http://localhost:8080/auth/logout',
+                '/auth/logout',
                 {},
                 {
                     headers: {
