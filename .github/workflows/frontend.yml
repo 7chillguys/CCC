@@ -29,7 +29,7 @@ jobs:
 
             # node_modules 생성
             - name: npm install
-              working-directory: /home/runner/work/CCC
+              working-directory: /home/runner/work/CCC/ccc-react-master
               run: npm install
 
             # 단위테스트 (추후 진행)
