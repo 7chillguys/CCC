@@ -14,8 +14,6 @@ jobs:
         steps:
             - name: Checkout Repository Resources
               uses: actions/checkout@v2
-              with:
-                path: CCC
 
             - name: .env 환경 변수 동적 생성
               run : |
@@ -31,6 +29,7 @@ jobs:
 
             # node_modules 생성
             - name: npm install
+              working-directory: /home/runner/work/CCC
               run: npm install
 
             # 단위테스트 (추후 진행)
