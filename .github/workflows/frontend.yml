@@ -3,10 +3,10 @@ name: front for ci/cd
 on:
     push:
         branches:
-            - CCC-36-git-action-front
+            - Eureka
     pull_request:
         branches:
-            - CCC-36-git-action-front
+            - Eureka
 
 jobs:
     react-deploy:
