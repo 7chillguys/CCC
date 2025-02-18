@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import "./ChatRoom.css"; // ✅ 스타일 적용
 
@@ -9,6 +9,19 @@ function ChatRoom() {
     const accessToken = localStorage.getItem("AccessToken");
     const websocket = useRef(null);
 
+    // ✅ `sendJoinMessage`를 useCallback으로 감싸서 의존성 문제 해결
+    const sendJoinMessage = useCallback(() => {
+        if (!email || !websocket.current || websocket.current.readyState !== WebSocket.OPEN) return;
+
+        const payload = JSON.stringify({
+            type: "join",
+            username: email
+        });
+
+        console.log(`📤 채팅방 입장 메시지 전송: ${payload}`);
+        websocket.current.send(payload);
+    }, [email]);
+
     useEffect(() => {
         if (!email || !accessToken) {
             alert("로그인이 필요합니다.");
@@ -16,13 +29,12 @@ function ChatRoom() {
             return;
         }
 
-        // ✅ WebSocket 중복 연결 방지
         if (!websocket.current || websocket.current.readyState === WebSocket.CLOSED) {
             websocket.current = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
             websocket.current.onopen = () => {
                 console.log("✅ WebSocket 연결 성공!");
-                sendJoinMessage();
+                sendJoinMessage(); // ✅ useCallback을 사용했기 때문에 안전
             };
 
             websocket.current.onmessage = (event) => {
@@ -30,12 +42,9 @@ function ChatRoom() {
                 try {
                     const data = JSON.parse(event.data);
 
-                    // ✅ 입장 메시지 감지 및 표시
                     if (data.sender === "시스템") {
                         setMessages((prev) => [...prev, { sender: "시스템", text: data.message }]);
-                    }
-                    // ✅ 일반 채팅 메시지 추가
-                    else if (data.sender && data.message) {
+                    } else if (data.sender && data.message) {
                         displayMessage(data.sender, data.message);
                     }
                 } catch (e) {
@@ -54,26 +63,14 @@ function ChatRoom() {
                 websocket.current.close();
             }
         };
-    }, [accessToken, email, sendJoinMessage]); // ✅ 한 번만 실행됨
-
-    const sendJoinMessage = () => {
-        if (!email || !websocket.current || websocket.current.readyState !== WebSocket.OPEN) return;
-
-        const payload = JSON.stringify({
-            type: "join",
-            username: email
-        });
-
-        console.log(`📤 채팅방 입장 메시지 전송: ${payload}`);
-        websocket.current.send(payload);
-    };
+    }, [accessToken, email, sendJoinMessage]); // ✅ useCallback을 의존성 배열에 추가하여 무한 렌더링 방지
 
     const sendMessage = async () => {
         if (!message.trim()) return;
 
         try {
             await axios.post(
-                "/chat/send", // ✅ API Gateway 경유
+                "/chat/send",
                 { sender: email, message },
                 { headers: { Authorization: accessToken, "Content-Type": "application/json" } }
             );
@@ -122,11 +119,11 @@ function ChatRoom() {
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                     />
-                    <input id="fileInput" type="file" style={{display: "none"}} accept="image/*, .pdf, .doc, .docx"/>
+                    <input id="fileInput" type="file" style={{ display: "none" }} accept="image/*, .pdf, .doc, .docx" />
                     <img id="uploadImage" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png"
-                         alt="이미지 업로드"/>
+                         alt="이미지 업로드" />
                     <img id="uploadFile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png"
-                         alt="파일 업로드"/>
+                         alt="파일 업로드" />
                 </footer>
             </main>
         </div>
