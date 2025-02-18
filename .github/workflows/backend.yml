@@ -79,11 +79,13 @@ jobs:
           
           # ccc-chat 패키지
           cd ../ccc-chat
+          chmod +x ./gradlew
           ./gradlew clean build
           ls ./build/libs
           
           # ccc-user 패키지
           cd ../ccc-user
+          chmod +x ./gradlew
           ./gradlew clean build
           ls ./build/libs
           
