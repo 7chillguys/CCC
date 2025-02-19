@@ -75,12 +75,12 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    //  파일 업로드 메시지 브로드캐스트
-    public void broadcastFileMessage(String fileUrl) throws IOException {
-        log.info("📢 파일 업로드 브로드캐스트: {}", fileUrl);
-
-        String fileMessage = "<a href='" + fileUrl + "' target='_blank'><img src='" + fileUrl + "' style='max-width: 200px; max-height: 200px; border-radius: 5px;'/></a>";
-
+    public void broadcastFileMessage(String sender, String fileUrl) throws IOException {
+        log.info("📢 파일 업로드 브로드캐스트: {} by {}", fileUrl, sender);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String fileMessage = objectMapper.writeValueAsString(
+                Map.of("sender", sender, "fileUrl", fileUrl, "type", "file")
+        );
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
                 session.sendMessage(new TextMessage(fileMessage));
