@@ -24,6 +24,32 @@ function ChatRoom() {
 
     const [messages, dispatchMessages] = useReducer(messagesReducer, []);
 
+    const checkMessageDeleted = useCallback(async (messageId) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/chat/check/${messageId}`, {
+                headers: { Authorization: accessToken }
+            });
+            return response.data.deleted;
+        } catch (error) {
+            console.error("🚨 메시지 삭제 상태 확인 실패:", error);
+            return false;
+        }
+    }, [accessToken]); // ✅ 의존성 배열 추가
+
+    const deleteMessage = useCallback(async (messageId) => {
+        try {
+            console.log("🗑 삭제 요청 메시지 ID 확인:", messageId);
+
+            const isDeleted = await checkMessageDeleted(messageId);
+            if (isDeleted) {
+                dispatchMessages({ type: "DELETE_MESSAGE", payload: messageId });
+                console.log("✅ 메시지 삭제 완료:", messageId);
+            }
+        } catch (error) {
+            console.error("🚨 메시지 삭제 확인 실패:", error);
+        }
+    }, [checkMessageDeleted]); // ✅ checkMessageDeleted 추가
+
     const sendJoinMessage = useCallback(() => {
         if (!email || !roomId || !websocket.current || websocket.current.readyState !== WebSocket.OPEN) return;
 
@@ -45,21 +71,7 @@ function ChatRoom() {
         setTimeout(() => {
             deleteMessage(id);
         }, 20000);
-    }, []);
-
-    const deleteMessage = useCallback(async (messageId) => {
-        try {
-            console.log("🗑 삭제 요청 메시지 ID 확인:", messageId);
-
-            const isDeleted = await checkMessageDeleted(messageId);
-            if (isDeleted) {
-                dispatchMessages({ type: "DELETE_MESSAGE", payload: messageId });
-                console.log("✅ 메시지 삭제 완료:", messageId);
-            }
-        } catch (error) {
-            console.error("🚨 메시지 삭제 확인 실패:", error);
-        }
-    }, []);
+    }, [deleteMessage]); // ✅ deleteMessage 추가
 
     useEffect(() => {
         if (!email || !accessToken) {
@@ -135,19 +147,6 @@ function ChatRoom() {
         } catch (error) {
             console.error("🚨 메시지 전송 실패:", error);
             alert("메시지 전송에 실패했습니다.");
-        }
-    };
-
-    const checkMessageDeleted = async (messageId) => {
-        try {
-            const response = await axios.get(`http://localhost:8080/chat/check/${messageId}`, {
-                headers: { Authorization: accessToken }
-            });
-
-            return response.data.deleted;
-        } catch (error) {
-            console.error("🚨 메시지 삭제 상태 확인 실패:", error);
-            return false;
         }
     };
 
