@@ -98,7 +98,23 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
                 session.sendMessage(new TextMessage(fileMessage));
+
+        }
+    }
+
+    public void broadcastMessage(String roomId, String message) throws IOException {
+        if (roomSessions.containsKey(roomId)) {
+            log.info("📨 {} 방에 메시지 전송 시작: {}", roomId, message);  // ✅ 방별 메시지 전송 로그 추가
+
+            for (WebSocketSession session : roomSessions.get(roomId)) {
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(message));
+                    log.info("📩 메시지 전송 완료 - 세션 ID: {} (채팅방: {})", session.getId(), roomId);
+                }
+
             }
+        } else {
+            log.warn("⚠️ {} 방에 세션이 없습니다! 메시지를 보낼 수 없습니다.", roomId);
         }
     }
 }

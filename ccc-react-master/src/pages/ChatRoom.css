@@ -146,3 +146,46 @@ footer img {
 footer img:hover {
     opacity: 1;
 }
+
+/* 버튼 컨테이너 (버튼을 가로 정렬) */
+.button-container {
+    display: flex;
+    justify-content: center;  /* 가운데 정렬 */
+    gap: 10px;  /* 버튼 간격 */
+    margin-bottom: 10px;
+}
+
+/* 초대 버튼 */
+.invite-button {
+    background-color: #b5b5b5; /* 파란색 */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: auto;
+}
+
+.invite-button:hover {
+    background-color: #0056b3; /* 어두운 파란색 */
+}
+
+/* 나가기 버튼 */
+.leave-button {
+    background-color: #b5b5b5; /* 빨간색 */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: auto;
+}
+
+.leave-button:hover {
+    background-color: #a71d2a; /* 어두운 빨간색 */
+}
+

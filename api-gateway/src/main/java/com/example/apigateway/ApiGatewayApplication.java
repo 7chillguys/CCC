@@ -54,6 +54,7 @@ public class ApiGatewayApplication {
                 .route("ccc-chat",
                         r->r.path("/chat/**").uri("lb://ccc-chat")  )
 
+
                 .route("ccc-chat",
                         r->r.path("/chatroom/**").uri("lb://ccc-chat")  )
                 .route("ccc-chat-file",
