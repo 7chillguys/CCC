@@ -1,18 +1,18 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import SignUp from './pages/SignUp';  // 회원가입 페이지
-import Home from './pages/Home';      // 홈 페이지
-import Login from './pages/Login';    // 로그인 페이지
-import ChatRoom from "./pages/ChatRoom";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import ChatRoom from "./pages/ChatRoom"; // ✅ ChatRoom 가져오기
 
 function App() {
     return (
         <Router>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/signup" element={<SignUp />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/chatroom" element={<ChatRoom />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/chatroom/:roomId" element={<ChatRoom />} /> {/* ✅ 동적 라우트 추가 */}
             </Routes>
         </Router>
     );

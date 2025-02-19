@@ -70,6 +70,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // 아마존 의존성
+    implementation 'software.amazon.awssdk:s3:2.20.134'
+    implementation 'software.amazon.awssdk:auth:2.20.134'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 
