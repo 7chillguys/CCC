@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ function Login() {
 
         try {
             // 로그인 요청
-            const response = await axios.post('http://localhost:8080/auth/login', {
+            const response = await axios.post('/auth/login', {
                 email,
                 password,
             }, {

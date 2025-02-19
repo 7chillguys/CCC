@@ -4,7 +4,7 @@ import axios from "axios";
 
 function Home() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [chatRooms, setChatRooms] = useState([]); // ✅ 채팅방 목록 상태 추가
+    const [chatRooms, setChatRooms] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -53,11 +53,11 @@ function Home() {
         try {
             const response = await axios.post("http://localhost:8080/chat/room/create", {
                 name: roomName,
-                email: userEmail, // ✅ email 추가
+                email: userEmail,
             });
 
             console.log("채팅방 생성 성공:", response.data);
-            setChatRooms([...chatRooms, response.data]); // ✅ 새 채팅방 목록에 추가
+            setChatRooms([...chatRooms, response.data]);
         } catch (error) {
             console.error("채팅방 생성 실패:", error);
             alert("채팅방 생성에 실패했습니다.");
@@ -65,7 +65,7 @@ function Home() {
     };
 
     const enterChatRoom = (roomId) => {
-        window.location.href = `/chatroom/${roomId}`; // ✅ 선택한 채팅방으로 이동
+        window.location.href = `/chatroom/${roomId}`;
     };
 
     const handleLogout = async () => {
