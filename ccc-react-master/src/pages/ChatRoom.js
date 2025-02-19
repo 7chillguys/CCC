@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useReducer } from "react";
+import React, { useState, useEffect, useRef, useReducer, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./ChatRoom.css";
@@ -23,6 +23,43 @@ function ChatRoom() {
     };
 
     const [messages, dispatchMessages] = useReducer(messagesReducer, []);
+
+    const sendJoinMessage = useCallback(() => {
+        if (!email || !roomId || !websocket.current || websocket.current.readyState !== WebSocket.OPEN) return;
+
+        const payload = JSON.stringify({
+            type: "join",
+            username: email,
+            roomId: roomId
+        });
+
+        websocket.current.send(payload);
+    }, [email, roomId]);
+
+    const receiveMessage = useCallback((id, sender, text) => {
+        dispatchMessages({
+            type: "ADD_MESSAGE",
+            payload: { id, sender, text }
+        });
+
+        setTimeout(() => {
+            deleteMessage(id);
+        }, 20000);
+    }, []);
+
+    const deleteMessage = useCallback(async (messageId) => {
+        try {
+            console.log("🗑 삭제 요청 메시지 ID 확인:", messageId);
+
+            const isDeleted = await checkMessageDeleted(messageId);
+            if (isDeleted) {
+                dispatchMessages({ type: "DELETE_MESSAGE", payload: messageId });
+                console.log("✅ 메시지 삭제 완료:", messageId);
+            }
+        } catch (error) {
+            console.error("🚨 메시지 삭제 확인 실패:", error);
+        }
+    }, []);
 
     useEffect(() => {
         if (!email || !accessToken) {
@@ -72,20 +109,7 @@ function ChatRoom() {
                 websocket.current.close();
             }
         };
-    }, [roomId, accessToken, deleteMessage, email, receiveMessage, sendJoinMessage]);
-
-
-    const sendJoinMessage = () => {
-        if (!email || !roomId || !websocket.current || websocket.current.readyState !== WebSocket.OPEN) return;
-
-        const payload = JSON.stringify({
-            type: "join",
-            username: email,
-            roomId: roomId
-        });
-
-        websocket.current.send(payload);
-    };
+    }, [roomId, accessToken, email, sendJoinMessage, deleteMessage, receiveMessage]);
 
     const sendMessage = async () => {
         if (!message.trim()) return;
@@ -111,31 +135,6 @@ function ChatRoom() {
         } catch (error) {
             console.error("🚨 메시지 전송 실패:", error);
             alert("메시지 전송에 실패했습니다.");
-        }
-    };
-
-    const receiveMessage = (id, sender, text) => {
-        dispatchMessages({
-            type: "ADD_MESSAGE",
-            payload: { id, sender, text }
-        });
-
-        setTimeout(() => {
-            deleteMessage(id);
-        }, 20000);
-    };
-
-    const deleteMessage = async (messageId) => {
-        try {
-            console.log("🗑 삭제 요청 메시지 ID 확인:", messageId);
-
-            const isDeleted = await checkMessageDeleted(messageId);
-            if (isDeleted) {
-                dispatchMessages({ type: "DELETE_MESSAGE", payload: messageId });
-                console.log("✅ 메시지 삭제 완료:", messageId);
-            }
-        } catch (error) {
-            console.error("🚨 메시지 삭제 확인 실패:", error);
         }
     };
 
@@ -175,25 +174,23 @@ function ChatRoom() {
         try {
             await axios.delete(`http://localhost:8080/chat/room/leave/${roomId}`, {
                 headers: { Authorization: accessToken },
-                data: { email } // ✅ params 대신 data 사용
+                data: { email }
             });
 
             alert("채팅방을 성공적으로 나갔습니다.");
-            navigate("/"); // ✅ 메인 페이지로 이동
+            navigate("/");
         } catch (error) {
             console.error("🚨 채팅방 나가기 실패:", error);
             alert("채팅방 나가기에 실패했습니다.");
         }
     };
 
-
     return (
         <div id="container">
             <main>
                 <ul id="chat">
                     {messages.map((msg) => (
-                        <li key={msg.id}
-                            className={msg.sender === email ? "me" : msg.sender === "시스템" ? "system" : "you"}>
+                        <li key={msg.id} className={msg.sender === email ? "me" : msg.sender === "시스템" ? "system" : "you"}>
                             <div className="message-container">
                                 <div className="username">{msg.sender}</div>
                                 <div className="message">{msg.text}</div>
@@ -211,18 +208,12 @@ function ChatRoom() {
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                     />
-                    <input id="fileInput" type="file" style={{display: "none"}} accept="image/*, .pdf, .doc, .docx"/>
-                    <img id="uploadImage" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png"
-                         alt="이미지 업로드"/>
-                    <img id="uploadFile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png"
-                         alt="파일 업로드"/>
                 </footer>
 
                 <div className="button-container">
                     <button className="invite-button" onClick={inviteUser}>초대</button>
                     <button className="leave-button" onClick={leaveChatRoom}>나가기</button>
                 </div>
-
             </main>
         </div>
     );
