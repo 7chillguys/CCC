@@ -184,9 +184,9 @@ jobs:
             mv /home/ubuntu/server/demo/api-gateway/run.jar /home/ubuntu/server/web/api-gateway/run.jar
             mv /home/ubuntu/server/demo/eureka-server/run.jar /home/ubuntu/server/web/eureka-server/run.jar
             cd /home/ubuntu/server/web
-            sudo fuser -k -n tcp 8080 || true
-            nohup java -jar ccc-game/run.jar > ./ccc-chat/output.log 2>&1 &
-            nohup java -jar ccc-game/run.jar > ./ccc-user/output.log 2>&1 &
+            sudo pkill -f 'java -jar' || true
+            nohup java -jar ccc-chat/run.jar > ./ccc-chat/output.log 2>&1 &
+            nohup java -jar ccc-user/run.jar > ./ccc-user/output.log 2>&1 &
             nohup java -jar ccc-menu/run.jar > ./ccc-menu/output.log 2>&1 &
             nohup java -jar ccc-game/run.jar > ./ccc-game/output.log 2>&1 &
             nohup java -jar api-gateway/run.jar > ./api-gateway/output.log 2>&1 &
