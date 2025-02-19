@@ -16,6 +16,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**", "/chat/room", "/auth/login").permitAll()  // ✅ 주요 경로 허용
                         .requestMatchers("/ws/chat").permitAll()  // ✅ WebSocket 허용
+                        .requestMatchers("/file/upload", "/file/delete").permitAll()
                         .anyRequest().authenticated()
                 )
 

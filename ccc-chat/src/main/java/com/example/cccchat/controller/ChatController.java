@@ -6,15 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
 
     private final CustomWebSocketHandler webSocketHandler;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public ChatController(CustomWebSocketHandler webSocketHandler) {

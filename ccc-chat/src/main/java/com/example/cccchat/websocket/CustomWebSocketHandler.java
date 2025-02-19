@@ -75,11 +75,14 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    //  파일 업로드 메시지 브로드캐스트
-    public void broadcastFileMessage(String fileUrl) throws IOException {
+    // ✅ JSON 형식으로 이미지 URL을 브로드캐스트하는 메서드
+    public void broadcastFileMessage(String sender, String fileUrl) throws IOException {
         log.info("📢 파일 업로드 브로드캐스트: {}", fileUrl);
 
-        String fileMessage = "<a href='" + fileUrl + "' target='_blank'><img src='" + fileUrl + "' style='max-width: 200px; max-height: 200px; border-radius: 5px;'/></a>";
+        ObjectMapper objectMapper = new ObjectMapper();
+        String fileMessage = objectMapper.writeValueAsString(
+                Map.of("sender", sender, "imageUrl", fileUrl) // ✅ JSON 형식으로 변환
+        );
 
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
@@ -87,4 +90,5 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             }
         }
     }
+
 }
