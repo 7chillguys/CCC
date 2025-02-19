@@ -72,7 +72,8 @@ function ChatRoom() {
                 websocket.current.close();
             }
         };
-    }, [roomId]);
+    }, [roomId, accessToken, deleteMessage, email, receiveMessage, sendJoinMessage]);
+
 
     const sendJoinMessage = () => {
         if (!email || !roomId || !websocket.current || websocket.current.readyState !== WebSocket.OPEN) return;
