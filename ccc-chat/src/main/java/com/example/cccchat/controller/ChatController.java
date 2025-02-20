@@ -18,6 +18,10 @@ public class ChatController {
 
     private final CustomWebSocketHandler webSocketHandler;
     private final ChatMessageService chatService;
+  
+  
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     @Autowired
     public ChatController(CustomWebSocketHandler webSocketHandler, ChatMessageService chatService) {
@@ -69,4 +73,4 @@ public class ChatController {
             return ResponseEntity.status(404).body("메시지를 찾을 수 없음");
         }
     }
-}
+

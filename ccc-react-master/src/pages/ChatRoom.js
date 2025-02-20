@@ -10,6 +10,9 @@ function ChatRoom() {
     const email = localStorage.getItem("user") || "Guest";
     const accessToken = localStorage.getItem("AccessToken");
     const websocket = useRef(null);
+    const imageInputRef = useRef(null);
+    const fileInputRef = useRef(null);
+    const chatContainerRef = useRef(null);
 
     const messagesReducer = (state, action) => {
         switch (action.type) {
@@ -103,8 +106,16 @@ function ChatRoom() {
                             deleteMessage(data.messageId);
                         }, 2000);
                     }
-                    else if (data.id && data.sender && data.message) {
-                        receiveMessage(data.id, data.sender, data.message);
+                    else if (data.sender && data.type === "text" && data.message) {
+                        displayMessage(data.sender, data.message);
+                    }
+                    else if (data.sender && data.type === "image" && data.imageUrl) {
+                        console.log("🔍 이미지 메시지 수신:", data.imageUrl);
+                        displayMessage(data.sender, null, data.imageUrl, undefined, undefined);
+                    }
+                    else if (data.sender && data.type === "file" && data.fileUrl && data.fileName) {
+                        console.log("📂 파일 메시지 수신:", data.fileUrl, data.fileName);
+                        displayMessage(data.sender, null, undefined, data.fileUrl, data.fileName);
                     }
                 } catch (e) {
                     console.error("🚨 메시지 JSON 파싱 실패:", e);
@@ -150,6 +161,72 @@ function ChatRoom() {
         }
     };
 
+
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("sender", email);
+
+        try {
+            const response = await axios.post("http://localhost:8080/file/upload", formData, {
+                headers: { Authorization: accessToken, "Content-Type": "multipart/form-data" }
+            });
+
+            const imageUrl = response.data.fileUrl;
+            console.log("✅ 이미지 업로드 성공:", imageUrl);
+
+
+            if (websocket.current && websocket.current.readyState === WebSocket.OPEN) {
+                websocket.current.send(JSON.stringify({
+                    sender: email,
+                    imageUrl: imageUrl,
+                    type: "image"
+                }));
+            }
+
+            displayMessage(email, null, imageUrl, undefined, undefined );
+        } catch (error) {
+            console.error("🚨 이미지 업로드 실패:", error);
+            alert("이미지 업로드에 실패했습니다.");
+        }
+    };
+
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("sender", email);
+
+        try {
+            const response = await axios.post("http://localhost:8080/file/upload", formData, {
+                headers: { Authorization: accessToken, "Content-Type": "multipart/form-data" }
+            });
+
+            const fileUrl = response.data.fileUrl;
+            const fileName = file.name;
+            console.log("✅ 파일 업로드 성공:", fileUrl, fileName);
+
+            if (websocket.current && websocket.current.readyState === WebSocket.OPEN) {
+                websocket.current.send(JSON.stringify({
+                    sender: email,
+                    fileUrl: fileUrl,
+                    fileName: fileName,
+                    type: "file"
+                }));
+            }
+
+
+            displayMessage(email, null, undefined, fileUrl, fileName);
+        } catch (error) {
+            console.error("🚨 파일 업로드 실패:", error);
+            alert("파일 업로드에 실패했습니다.");
+        }
+    };
     const inviteUser = async () => {
         const inviteEmail = prompt("초대할 이메일을 입력하세요:");
         if (!inviteEmail) return;
@@ -166,7 +243,33 @@ function ChatRoom() {
             alert("초대에 실패했습니다.");
         }
     };
+    const displayMessage = (
+        sender,
+        text = null,
+        imageUrl = undefined,
+        fileUrl = undefined,
+        fileName = undefined
+    ) => {
+        // 메시지를 하나 추가
+        dispatchMessages({
+            type: "ADD_MESSAGE",
+            payload: {
+                id: Date.now(),
+                sender,
+                text,
+                imageUrl,
+                fileUrl,
+                fileName
+            }
+        });
 
+        // 메시지 렌더링 후 자동 스크롤
+        setTimeout(() => {
+            if (chatContainerRef.current) {
+                chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+            }
+        }, 100);
+    };
     const leaveChatRoom = async () => {
         if (!window.confirm("정말로 채팅방을 나가시겠습니까?")) return;
 
@@ -187,12 +290,25 @@ function ChatRoom() {
     return (
         <div id="container">
             <main>
-                <ul id="chat">
+                <ul id="chat" >
                     {messages.map((msg) => (
                         <li key={msg.id} className={msg.sender === email ? "me" : msg.sender === "시스템" ? "system" : "you"}>
                             <div className="message-container">
                                 <div className="username">{msg.sender}</div>
-                                <div className="message">{msg.text}</div>
+                                {msg.imageUrl ? (
+                                    <div className="message image-message">
+                                        <img src={msg.imageUrl} alt="업로드된 이미지" />
+                                    </div>
+                                ) : msg.fileUrl ? (
+                                    <div className="message file-message">
+                                        <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer">
+                                            <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="파일 아이콘" />
+                                            <span className="file-name">{msg.fileName}</span>
+                                        </a>
+                                    </div>
+                                ) : (
+                                    <div className="message">{msg.text}</div>
+                                )}
                             </div>
                         </li>
                     ))}
@@ -207,6 +323,12 @@ function ChatRoom() {
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                     />
+                    <input ref={imageInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleImageUpload} />
+                    <img id="uploadImage" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png"
+                         alt="이미지 업로드" onClick={() => imageInputRef.current.click()} />
+                    <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.zip,.txt" style={{ display: "none" }} onChange={handleFileUpload} />
+                    <img id="uploadFile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png"
+                         alt="파일 업로드" onClick={() => fileInputRef.current.click()} />
                 </footer>
 
                 <div className="button-container">

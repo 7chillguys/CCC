@@ -53,8 +53,12 @@ public class ApiGatewayApplication {
                         r->r.path("/ws/chat/**").uri("lb://ccc-chat")  )
                 .route("ccc-chat",
                         r->r.path("/chat/**").uri("lb://ccc-chat")  )
+
+
                 .route("ccc-chat",
                         r->r.path("/chatroom/**").uri("lb://ccc-chat")  )
+                .route("ccc-chat-file",
+                        r -> r.path("/file/**").uri("lb://ccc-chat")   )
 
                 .route("ccc-game",
                         r->r.path("/game/**").uri("lb://ccc-game")  )

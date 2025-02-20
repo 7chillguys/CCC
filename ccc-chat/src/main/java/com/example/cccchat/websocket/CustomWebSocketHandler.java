@@ -1,90 +1,90 @@
 package com.example.cccchat.websocket;
 
-import com.example.cccchat.entity.ChatMessage;
-import com.example.cccchat.repository.ChatMessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
 @Component
 public class CustomWebSocketHandler extends TextWebSocketHandler {
 
-    private static final Map<String, Set<WebSocketSession>> roomSessions = new HashMap<>();
-
-    @Autowired
-    private ChatMessageRepository chatMessageRepository;
-
+    private static final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         log.info("✅ WebSocket 연결 성공: {}", session.getId());
+
+        // ✅ 중복 추가 방지: 이미 존재하는 세션이면 추가하지 않음
+        if (!sessions.contains(session)) {
+            sessions.add(session);
+        }
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+        log.info("📩 메시지 수신: {}", message.getPayload());
+
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> jsonMap = objectMapper.readValue(message.getPayload(), Map.class);
 
         String type = jsonMap.get("type");
-        String roomId = jsonMap.get("roomId");
 
+        // ✅ 사용자가 입장했을 경우 입장 메시지 브로드캐스트
         if ("join".equals(type)) {
             String username = jsonMap.get("username");
-
-            roomSessions.putIfAbsent(roomId, new HashSet<>());
-            roomSessions.get(roomId).add(session);
-            log.info("📢 {}님이 {} 방에 입장함. 현재 세션 수: {}", username, roomId, roomSessions.get(roomId).size());
-
-            Map<String, String> joinMessage = Map.of(
-                    "type", "join",
-                    "roomId", roomId,
-                    "username", username
+            String joinMessage = objectMapper.writeValueAsString(
+                    Map.of("sender", "시스템", "message", username + "님이 입장했습니다.")
             );
-            String jsonMessage = objectMapper.writeValueAsString(joinMessage);
-            broadcastMessage(roomId, jsonMessage);
-        }
-    }
-
-    @Scheduled(fixedRate = 5000) // 5초마다 실행
-    public void autoDeleteMessages() throws IOException {
-        LocalDateTime tenSecondsAgo = LocalDateTime.now().minusSeconds(10);
-        List<ChatMessage> expiredMessages = chatMessageRepository.findByTimestampBefore(tenSecondsAgo);
-
-        for (ChatMessage message : expiredMessages) {
-            String deleteMessage = new ObjectMapper().writeValueAsString(
-                    Map.of("type", "delete", "messageId", message.getId().toString())
-            );
-
-            broadcastMessage(message.getRoomId(), deleteMessage);
-        }
-
-        if (!expiredMessages.isEmpty()) {
-            chatMessageRepository.deleteAll(expiredMessages);
-            log.info("🚀 10초가 지난 메시지를 자동 삭제 완료!");
-        }
-    }
-
-    public void broadcastMessage(String roomId, String message) throws IOException {
-        if (roomSessions.containsKey(roomId)) {
-            log.info("📨 {} 방에 메시지 전송 시작: {}", roomId, message);  // ✅ 방별 메시지 전송 로그 추가
-
-            for (WebSocketSession session : roomSessions.get(roomId)) {
-                if (session.isOpen()) {
-                    session.sendMessage(new TextMessage(message));
-                    log.info("📩 메시지 전송 완료 - 세션 ID: {} (채팅방: {})", session.getId(), roomId);
-                }
-            }
+            broadcastMessage(joinMessage);
         } else {
-            log.warn("⚠️ {} 방에 세션이 없습니다! 메시지를 보낼 수 없습니다.", roomId);
+            String sender = jsonMap.get("sender");
+            String msg = jsonMap.get("message");
+
+            if (sender != null && msg != null) {
+                String chatMessage = objectMapper.writeValueAsString(
+                        Map.of("sender", sender, "message", msg)
+                );
+                broadcastMessage(chatMessage);
+            }
+        }
+    }
+
+
+
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        log.info("🔌 WebSocket 연결 종료: {}", session.getId());
+        sessions.remove(session);
+    }
+
+
+    // ✅ 일반 메시지 브로드캐스트
+    public void broadcastMessage(String message) throws IOException {
+        log.info("📢 WebSocket으로 메시지 브로드캐스트: {}", message);
+
+        for (WebSocketSession session : sessions) {
+            if (session.isOpen()) {
+                session.sendMessage(new TextMessage(message));
+            }
+        }
+    }
+
+    //  파일 업로드 메시지 브로드캐스트
+    public void broadcastFileMessage(String fileUrl) throws IOException {
+        log.info("📢 파일 업로드 브로드캐스트: {}", fileUrl);
+
+        String fileMessage = "<a href='" + fileUrl + "' target='_blank'><img src='" + fileUrl + "' style='max-width: 200px; max-height: 200px; border-radius: 5px;'/></a>";
+
+        for (WebSocketSession session : sessions) {
+            if (session.isOpen()) {
+                session.sendMessage(new TextMessage(fileMessage));
+            }
         }
     }
 }

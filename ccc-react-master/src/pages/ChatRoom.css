@@ -63,7 +63,14 @@ body {
     flex-direction: column;
     align-items: flex-end;
 }
-
+.image-message img {
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 5px;
+    object-fit: cover;
+    display: block;
+    margin: 0;
+}
 .me .username {
     align-self: flex-end;
 }
@@ -188,4 +195,32 @@ footer img:hover {
 .leave-button:hover {
     background-color: #a71d2a; /* 어두운 빨간색 */
 }
+/* 파일 메시지 전체 컨테이너 */
+.file-message {
+    display: flex;                /* 아이콘과 이름을 한 줄에 배치 */
+    align-items: center;          /* 수직 중앙 정렬 */
+}
 
+/* 파일 메시지 내부의 앵커 태그 */
+.file-message a {
+    display: flex;                /* 한 줄 배치 */
+    align-items: center;          /* 수직 중앙 정렬 */
+    text-decoration: none;        /* 밑줄 제거 */
+}
+
+/* 파일 아이콘 */
+.file-message img {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;               /* 아이콘이 줄어들지 않도록 */
+    margin-right: 8px;            /* 아이콘과 파일 이름 사이 간격 */
+}
+
+/* 파일 이름 스타일 */
+.file-name {
+    white-space: nowrap;          /* 한 줄로 표시 */
+    overflow: hidden;             /* 넘치는 부분 숨김 */
+    text-overflow: ellipsis;      /* 넘칠 경우 ... 처리 */
+    color: #fff;                  /* 파일 메시지 배경색에 맞게 글자색 지정 (필요 시) */
+    font-size: 14px;
+}
