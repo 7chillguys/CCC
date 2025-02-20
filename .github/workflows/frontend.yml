@@ -20,7 +20,6 @@ jobs:
                   echo "${{ secrets.CLIENT_ENV }}" > .env
                   pwd
                   ls -al
-
             # .env 설정 아래에 추가
             - name: nodejs install
               uses: actions/setup-node@v2
@@ -41,7 +40,6 @@ jobs:
               run: |
                   npm run build
                   ls ./build
-
             # build EC2 업로드
             - name: EC2에 빌드된 파일/폴더 업로드
               uses: appleboy/scp-action@v0.1.7
