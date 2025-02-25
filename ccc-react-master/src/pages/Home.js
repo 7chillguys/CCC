@@ -66,7 +66,7 @@ function Home() {
     };
 
     const enterChatRoom = (roomId) => {
-        window.location.href = `/chatroom/${roomId}`;
+        window.location.href = `http://13.211.3.123:8080/chatroom/${roomId}`;
     };
 
     const handleLogout = async () => {
