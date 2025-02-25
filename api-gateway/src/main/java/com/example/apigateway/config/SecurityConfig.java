@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.addAllowedOrigin("http://localhost:3000");  // React 앱의 URL
-                    config.addAllowedOrigin("http://13.211.3.123:3000");  // React 앱의 URL
+                    config.addAllowedOrigin("http://13.211.3.123");  // 배포 앱의 URL
                     config.addAllowedMethod("*");                      // 모든 HTTP 메서드 허용
                     config.addAllowedHeader("*");                      // 모든 헤더 허용
                     config.setAllowCredentials(true);                  // 쿠키 또는 인증 정보 허용
