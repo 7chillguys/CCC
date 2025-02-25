@@ -14,7 +14,7 @@ function Login() {
 
         try {
             // 로그인 요청
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, {
+            const response = await axios.post(`http://13.211.3.123:8080/auth/login`, {
                 email,
                 password,
             }, {

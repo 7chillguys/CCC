@@ -16,7 +16,7 @@ function SignUp() {
         e.preventDefault();
 
         try {
-             await axios.post(`${process.env.REACT_APP_API_URL}/user/signup`, {
+             await axios.post(`http://13.211.3.123:8080/user/signup`, {
                 empId,
                 name,
                 password,
