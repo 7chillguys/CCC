@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 function Home() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,7 +35,7 @@ function Home() {
 
     const fetchChatRooms = async (email) => {
         try {
-            const response = await axios.get("/chat/room/list", {
+            const response = await axios.get("http:localhost:8080/chat/room/list", {
                 params: { email },
             });
             setChatRooms(response.data);
@@ -52,7 +51,7 @@ function Home() {
         const userEmail = localStorage.getItem("user"); // ✅ 현재 로그인된 사용자 이메일
 
         try {
-            const response = await axios.post("/chat/room/create", {
+            const response = await axios.post("http:localhost:8080/chat/room/create", {
                 name: roomName,
                 email: userEmail,
             });

@@ -15,12 +15,6 @@ jobs:
             - name: Checkout Repository Resources
               uses: actions/checkout@v2
 
-            - name: .env 환경 변수 동적 생성
-              run : |
-                  echo "${{ secrets.CLIENT_ENV }}" > .env
-                  pwd
-                  ls -al
-
             # .env 설정 아래에 추가
             - name: nodejs install
               uses: actions/setup-node@v2
