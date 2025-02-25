@@ -16,7 +16,7 @@ function SignUp() {
         e.preventDefault();
 
         try {
-             await axios.post('http:localhost:8080/user/signup', {
+             await axios.post('http://localhost:8080/user/signup', {
                 empId,
                 name,
                 password,

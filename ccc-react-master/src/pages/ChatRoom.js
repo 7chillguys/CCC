@@ -26,7 +26,7 @@ function ChatRoom() {
 
     const checkMessageDeleted = useCallback(async (messageId) => {
         try {
-            const response = await axios.get(`http:localhost:8080/chat/check/${messageId}`, {
+            const response = await axios.get(`http://localhost:8080/chat/check/${messageId}`, {
                 headers: { Authorization: accessToken }
             });
             return response.data.deleted;
@@ -128,7 +128,7 @@ function ChatRoom() {
 
         try {
             const response = await axios.post(
-                "http:localhost:8080/chat/send",
+                "http://localhost:8080/chat/send",
                 { sender: email, message, roomId },
                 { headers: { Authorization: accessToken, "Content-Type": "application/json" } }
             );
@@ -156,7 +156,7 @@ function ChatRoom() {
 
         try {
             await axios.post(
-                "http:localhost:8080/chat/room/invite",
+                "http://localhost:8080/chat/room/invite",
                 { roomId, email: inviteEmail },
                 { headers: { Authorization: accessToken } }
             );
@@ -171,7 +171,7 @@ function ChatRoom() {
         if (!window.confirm("정말로 채팅방을 나가시겠습니까?")) return;
 
         try {
-            await axios.delete(`http:localhost:8080/chat/room/leave/${roomId}`, {
+            await axios.delete(`http://localhost:8080/chat/room/leave/${roomId}`, {
                 headers: { Authorization: accessToken },
                 data: { email }
             });
