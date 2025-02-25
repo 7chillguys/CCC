@@ -66,7 +66,7 @@ function Home() {
     };
 
     const enterChatRoom = (roomId) => {
-        window.location.href = `http://13.211.3.123:8080/chatroom/${roomId}`;
+        window.location.href = `/chatroom/${roomId}`;
     };
 
     const handleLogout = async () => {
@@ -80,7 +80,7 @@ function Home() {
             }
 
             const response = await axios.post(
-                "/auth/logout",
+                "http://13.211.3.123:8080/auth/logout",
                 {},
                 {
                     headers: {
