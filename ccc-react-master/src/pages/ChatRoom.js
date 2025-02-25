@@ -128,7 +128,7 @@ function ChatRoom() {
 
         try {
             const response = await axios.post(
-                "http://localhost:8080/chat/send",
+                `${process.env.REACT_APP_API_URL}/chat/send`,
                 { sender: email, message, roomId },
                 { headers: { Authorization: accessToken, "Content-Type": "application/json" } }
             );
@@ -156,7 +156,7 @@ function ChatRoom() {
 
         try {
             await axios.post(
-                "${process.env.REACT_APP_API_URL}/chat/room/invite",
+                `${process.env.REACT_APP_API_URL}/chat/room/invite`,
                 { roomId, email: inviteEmail },
                 { headers: { Authorization: accessToken } }
             );
